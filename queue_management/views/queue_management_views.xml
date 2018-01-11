@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <menuitem name="Queue Management" id="queue_management_menu_root"/>
+  <menuitem name="Queues" id="queue_management_menu_queue" parent="queue_management_menu_root"/>
+  <record id="queue_management_head_action" model="ir.actions.act_window">
+    <field name="name">Head</field>
+    <field name="res_model">queue_management.head</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+  <menuitem id="queue_management_head_menu_action" parent="queue_management_menu_queue" action="queue_management_head_action"/>
+  <record id="queue_management_queue_action" model="ir.actions.act_window">
+    <field name="name">Queues</field>
+    <field name="res_model">queue_management.queue</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+  <menuitem id="queue_management_queue_menu_action" parent="queue_management_menu_queue" action="queue_management_queue_action"/>
+  <record id="queue_management_ticket_action" model="ir.actions.act_window">
+    <field name="name">Tickets</field>
+    <field name="res_model">queue_management.ticket</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+  <menuitem id="queue_management_ticket_menu_action" parent="queue_management_menu_queue" action="queue_management_ticket_action"/>
+  <record id="queue_management_head_view_tree" model="ir.ui.view">
+    <field name="name">queue_management.head.tree</field>
+    <field name="model">queue_management.head</field>
+    <field name="arch" type="xml">
+      <tree string="Queue Head">
+        <field name="ticket_id"/>
+        <field name="window_id"/>
+        <field name="service_id"/>
+        <field name="ticket_state"/>
+      </tree>
+    </field>
+  </record>
+  <record id="queue_management_head_view_form" model="ir.ui.view">
+    <field name="name">queue_management.head.form</field>
+    <field name="model">queue_management.head</field>
+    <field name="arch" type="xml">
+      <form string="Queue Head">
+        <sheet>
+          <group>
+            <field name="ticket_id"/>
+            <field name="window_id"/>
+            <field name="service_id"/>
+            <field name="ticket_state"/>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <record id="queue_management_queue_view_tree" model="ir.ui.view">
+    <field name="name">queue_management.queue.tree</field>
+    <field name="model">queue_management.queue</field>
+    <field name="arch" type="xml">
+      <tree string="Queue">
+        <field name="service_id"/>
+      </tree>
+    </field>
+  </record>
+  <record id="queue_management_queue_view_form" model="ir.ui.view">
+    <field name="name">queue_management.queue.form</field>
+    <field name="model">queue_management.queue</field>
+    <field name="arch" type="xml">
+      <form string="Queue">
+        <sheet>
+          <group>
+            <field name="service_id"/>
+          </group>
+          <notebook>
+            <page string="Tickets">
+              <field name="ticket_ids" mode="tree">
+                <form string="Tickets">
+                  <group>
+                    <field name="name"/>
+                    <field name="ticket_state"/>
+                  </group>
+                </form>
+                <tree string="Tickets">
+                  <field name="name"/>
+                  <field name="ticket_state"/>
+                </tree>
+              </field>
+            </page>
+          </notebook>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <record id="queue_management_ticket_view_tree" model="ir.ui.view">
+    <field name="name">queue_management.ticket.tree</field>
+    <field name="model">queue_management.ticket</field>
+    <field name="arch" type="xml">
+      <tree string="Tickets">
+        <field name="name"/>
+        <field name="ticket_state"/>
+        <field name="service_id"/>
+      </tree>
+    </field>
+  </record>
+  <record id="queue_management_ticket_view_form" model="ir.ui.view">
+    <field name="name">queue_management.ticket.form</field>
+    <field name="model">queue_management.ticket</field>
+    <field name="arch" type="xml">
+      <form string="Tickets">
+        <sheet>
+          <group>
+        <field name="name"/>
+        <field name="ticket_state"/>
+        <field name="service_id"/>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+</odoo>
