@@ -25,7 +25,7 @@ class QueueManagementService(models.Model):
         self.env['queue_management.ticket'].create({'service_id': self.id})
 
 
-class QueueManagementQueueu(models.Model):
+class QueueManagementQueue(models.Model):
     _name = 'queue_management.queue'
 
     service_id = fields.Many2one('queue_management.service', 'Service')
@@ -44,7 +44,7 @@ class QueueManagementTicket(models.Model):
     _name = 'queue_management.ticket'
     name = fields.Char(string='Ticket Name', readonly=True)
     queue_id = fields.Many2one('queue_management.queue', 'Queue', required='True')
-    service_id = fields.Many2one('queue_management.service', 'Service', related='queue_id.service_id', readonly=True)
+    service_id = fields.Many2one('queue_management.service', 'Service', related='queue_id.service_id')
     ticket_state = fields.Selection([
         ('pending', 'Pending'),
         ('previous', 'Previous'),
@@ -68,8 +68,15 @@ class QueueManagementTicket(models.Model):
         if not vals.get('name'):
             service = self.env['queue_management.service'].browse(vals.get('service_id'))
             vals['name'] = service.sequence_id.next_by_id()
-        if not self.is_next_exist(vals['service_id']):
+        if not self.is_next_exists(vals['service_id']):
             vals['ticket_state'] = 'next'
+        if not vals.get('queue_id'):
+            queue = self.env['queue_management.queue'].search([('service_id', '=', vals.get('service_id'))])
+            if queue:
+                vals['queue_id'] = queue.id
+            else:
+                new_queue = self.env['queue_management.queue'].sudo().create({'service_id': vals.get('service_id')})
+                vals['queue_id'] = new_queue.id
         return super(QueueManagementTicket, self).create(vals)
 
     @api.model
@@ -95,23 +102,25 @@ class QueueManagementTicket(models.Model):
 
     @api.model
     def get_next_ticket(self, service_id):
+        print('\n\n\n', service_id, '\n\n\n')
         if self.is_next_exists(service_id):
             return None
         next_ticket = self.search([('ticket_state', '=', 'pending'),
                                    ('service_id', '=', service_id)], limit=1, order='name')
+        print('\n\n\n', next_ticket, '\n\n\n\n')
         return next_ticket
 
-    # @api.multi
-    # def call_client(self):
-    #     self.ensure_one()
-    #     current = self.search([('ticket_state', '=', 'current'),
-    #                            ('service_id', 'in', self.env.user.service_ids.mapped('id'))])
-    #     if current:
-    #         raise UserError(_('You already have current ticket, make it done first.'))
-    #     else:
-    #         self.ticket_state = 'current'
-    #         self.env['queue_management.head'].sudo().create({'ticket_id': self.id, 'window_id': self.env.user.window_id.id})
-    #         ticket = self.get_next_ticket(self.env.user.service_ids[0].id)
-    #         if ticket and ticket.id != self.id:
-    #             ticket.ticket_state = 'next'
-    #         self._refresh_ticket_list()
+    @api.multi
+    def call_client(self):
+        self.ensure_one()
+        self.ticket_state = 'current'
+        self.env['queue_management.head'].sudo().create({'ticket_id': self.id, 'window_id': self.env.user.window_id.id})
+        ticket = self.get_next_ticket(self.service_id.id)
+        if ticket and ticket.id != self.id:
+            ticket.ticket_state = 'next'
+        self._refresh_ticket_list()
+
+
+class QueueManagementServiceWindow(models.Model):
+    _name = 'queue_management.window'
+    name = fields.Integer(required=True, string='Service window')

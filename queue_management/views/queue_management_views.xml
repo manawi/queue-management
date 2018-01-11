@@ -2,6 +2,7 @@
 <odoo>
   <menuitem name="Queue Management" id="queue_management_menu_root"/>
   <menuitem name="Queues" id="queue_management_menu_queue" parent="queue_management_menu_root"/>
+  <menuitem name="Configuration" id="queue_management_menu_configuration" parent="queue_management_menu_root"/>
   <record id="queue_management_head_action" model="ir.actions.act_window">
     <field name="name">Head</field>
     <field name="res_model">queue_management.head</field>
@@ -52,7 +53,7 @@
     <field name="name">queue_management.queue.tree</field>
     <field name="model">queue_management.queue</field>
     <field name="arch" type="xml">
-      <tree string="Queue">
+      <tree string="Queues">
         <field name="service_id"/>
       </tree>
     </field>
@@ -75,7 +76,10 @@
                     <field name="ticket_state"/>
                   </group>
                 </form>
-                <tree string="Tickets">
+                <tree string="Tickets" editable="bottom" colors="red:ticket_state == 'current';gray:ticket_state == 'done';green:ticket_state == 'next';blue:ticket_state == 'pending'">
+                  <button name="call_client" icon="fa-arrow-circle-right" type="object" attrs="{'invisible': [('ticket_state', 'not in', 'next')]}"/>
+                  <button name="change_state_done" icon="fa-check" type="object" attrs="{'invisible': [('ticket_state', 'not in', 'current')]}"/>
+                  <button name="change_state_no_show" icon="fa-arrow-circle-down" type="object" attrs="{'invisible': [('ticket_state', 'not in', 'current')]}"/>
                   <field name="name"/>
                   <field name="ticket_state"/>
                 </tree>
@@ -110,6 +114,62 @@
           </group>
         </sheet>
       </form>
+    </field>
+  </record>
+  <record model="ir.actions.act_window" id="queue_management_service_action">
+    <field name="name">Service</field>
+    <field name="res_model">queue_management.service</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+  <menuitem id="queue_management_service_menu_action" parent="queue_management_menu_configuration" action="queue_management_service_action"/>
+  <record id="queue_management_service_view_form" model="ir.ui.view">
+    <field name="name">queue_management.service.form</field>
+    <field name="model">queue_management.service</field>
+    <field name="arch" type="xml">
+      <form string="Services">
+        <group>
+          <field name="name"/>
+          <field name="active"/>
+          <field name="sequence_id"/>
+        </group>
+      </form>
+    </field>
+  </record>
+  <record id="queue_management_service_view_tree" model="ir.ui.view">
+    <field name="name">queue_management.service.tree</field>
+    <field name="model">queue_management.service</field>
+    <field name="arch" type="xml">
+      <tree string="Services">
+          <field name="name"/>
+          <field name="active"/>
+          <field name="sequence_id"/>
+      </tree>
+    </field>
+  </record>
+  <record model="ir.actions.act_window" id="queue_management_window_action">
+    <field name="name">Service window</field>
+    <field name="res_model">queue_management.window</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+  <menuitem id="queue_management_window_menu_action" parent="queue_management_menu_configuration" action="queue_management_window_action"/>
+  <record id="queue_management_window_view_form" model="ir.ui.view">
+    <field name="name">queue_management.window.form</field>
+    <field name="model">queue_management.window</field>
+    <field name="arch" type="xml">
+      <form string="Service window">
+        <group>
+          <field name="name"/>
+        </group>
+      </form>
+    </field>
+  </record>
+  <record id="queue_management_window_view_tree" model="ir.ui.view">
+    <field name="name">queue_management.window.tree</field>
+    <field name="model">queue_management.window</field>
+    <field name="arch" type="xml">
+      <tree string="Service window">
+          <field name="name"/>
+      </tree>
     </field>
   </record>
 </odoo>

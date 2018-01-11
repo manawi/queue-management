@@ -22,6 +22,7 @@
     "external_dependencies": {"python": [], "bin": []},
     "data": [
         "views/queue_management_views.xml",
+        "views/res_users_view.xml",
     ],
     "qweb": [
     ],
