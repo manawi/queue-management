@@ -76,10 +76,11 @@
                     <field name="ticket_state"/>
                   </group>
                 </form>
-                <tree string="Tickets" editable="bottom" colors="red:ticket_state == 'current';gray:ticket_state == 'done';green:ticket_state == 'next';blue:ticket_state == 'pending'">
-                  <button name="call_client" icon="fa-arrow-circle-right" type="object" attrs="{'invisible': [('ticket_state', 'not in', 'next')]}"/>
-                  <button name="change_state_done" icon="fa-check" type="object" attrs="{'invisible': [('ticket_state', 'not in', 'current')]}"/>
-                  <button name="change_state_no_show" icon="fa-arrow-circle-down" type="object" attrs="{'invisible': [('ticket_state', 'not in', 'current')]}"/>
+                <tree string="Tickets" editable="bottom" colors="red:ticket_state == 'invited';gray:ticket_state == 'done';green:ticket_state == 'next';blue:ticket_state == 'waiting'">
+                  <button name="call_client" icon="fa-arrow-circle-right" type="object" attrs="{'invisible': [('ticket_state', 'not in', ('next', 'waiting'))]}"/>
+                  <button name="change_state_done" icon="fa-check" type="object" attrs="{'invisible': [('ticket_state', 'not in', 'in_progress')]}"/>
+                  <button name="change_state_no_show" icon="fa-arrow-circle-down" type="object" attrs="{'invisible': [('ticket_state', 'not in', 'invited')]}"/>
+                  <button name="change_state_in_progress" icon="fa-gear" type="object" attrs="{'invisible': [('ticket_state', 'not in', 'invited')]}"/>
                   <field name="name"/>
                   <field name="ticket_state"/>
                 </tree>
