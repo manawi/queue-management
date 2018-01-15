@@ -34,7 +34,7 @@ var Screen = Class.extend({
         return rpc.query({
             model: 'queue_management.head',
             method: 'search_read',
-            args: [[['ticket_state', '=', 'current']]],
+            args: [[['ticket_state', '=', 'invited']]],
             kwargs: {fields: ['id', 'ticket_id', 'window_id', 'service_id']}
         }).then(function (line_values) {
             for (var vals of line_values) {

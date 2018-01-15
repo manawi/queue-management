@@ -1,6 +1,6 @@
 odoo.define('queue_management.views', function (require) {
 'use strict';
-// var bus = require('bus.bus').bus;
+var bus = require('bus.bus').bus;
 var core = require('web.core');
 var Dialog = require('web.Dialog');
 var Screen = require('queue_management.classes').Screen;
@@ -22,7 +22,7 @@ var ScreenApp = Widget.extend({
         return $.when(this._super.apply(this, arguments),
                       this.screen.fetchAllLines()
                      ).then(function (dummy, user) {
-                         // bus.update_option('demo.ticket', user.partner_id);
+                         bus.update_option('demo.ticket', user.partner_id);
                      });
     },
     start: function () {
@@ -30,7 +30,7 @@ var ScreenApp = Widget.extend({
         return this._super.apply(this, arguments).then(function () {
             self.list = new ScreenList(self, self.screen.lines);
             self.list.appendTo($('.o_screen_list'));
-            // bus.on('notification', self, self._onNotification);
+            bus.on('notification', self, self._onNotification);
         });
     },
     _onNotification: function (notifications) {
@@ -62,7 +62,7 @@ var ScreenList = Widget.extend({
 
 var $elem = $('.o_screen_app');
 var app = new ScreenApp(null);
-// app.appendTo($elem).then(function () {
-//     bus.start_polling();
-// });
- });
+app.appendTo($elem).then(function () {
+    bus.start_polling();
+});
+});
