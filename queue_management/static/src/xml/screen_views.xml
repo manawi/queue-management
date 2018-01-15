@@ -22,6 +22,7 @@
             <th>Ticket</th>
             <th>Window</th>
             <th>Service</th>
+            <th>State</th>
           </thead>
           <tbody>
             <t t-foreach="widget.lines" t-as="line">
@@ -39,6 +40,7 @@
       <td><t t-esc='line.ticket_id[1]'/></td>
       <td><t t-esc='line.window_id[1]'/></td>
       <td><t t-esc='line.service_id[1]'/></td>
+      <td><t t-esc='line.ticket_state'/></td>
     </tr>
   </t>
 </odoo>

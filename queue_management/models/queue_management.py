@@ -69,8 +69,7 @@ class QueueManagementTicket(models.Model):
     def write(self, vals):
         result = super().write(vals)
         ticket_state = vals.get('ticket_state')
-        # if ticket_state and (ticket_state == 'invited' or ticket_state == 'in_progress'):
-        if ticket_state and ticket_state == 'invited':
+        if ticket_state and (ticket_state == 'invited' or ticket_state == 'in_progress'):
             (channel, message) = ((self._cr.dbname, 'screen.ticket'), ('current_ticket', self.ids))
             self.env['bus.bus'].sendone(channel, message)
         elif ticket_state:
