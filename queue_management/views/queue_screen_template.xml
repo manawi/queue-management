@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+    <template id="screen_assets" name="Screen Viewer Application Assets" inherit_id="web.assets_frontend" primary="True">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/bus/static/src/js/bus.js"/>
+            <script type="text/javascript" src="/web/static/src/js/widgets/notification.js"/>
+            <script type="text/javascript" src="/queue_management/static/src/js/models.js"/>
+            <script type="text/javascript" src="/queue_management/static/src/js/controllers.js"/>
+        </xpath>
+    </template>
+
+      <template id="queue_screen">
+        <t t-call="web.layout">
+            <t t-set="head">  
+                <t t-call-assets="web.assets_common" t-js="false"/>
+                <t t-call-assets="queue_management.screen_assets" t-js="false"/>
+                <t t-call-assets="web.assets_common" t-css="false"/>
+                <t t-call-assets="queue_management.screen_assets" t-css="false"/>
+                <script type="text/javascript">
+                    odoo.session_info = {
+                        user_id: <t t-esc="json.dumps(request.env.user.id)"/>
+                    };
+                </script>
+            </t>
+            <div class="container-fluid">
+                <div class="row o_screen_app"/>
+            </div>
+        </t>
+    </template>
+  </data>
+</odoo>
