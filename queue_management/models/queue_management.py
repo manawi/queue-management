@@ -19,11 +19,6 @@ class QueueManagementService(models.Model):
     sequence_id = fields.Many2one('ir.sequence', string='Letter', required=True)
     priority = fields.Integer(default=5)
 
-    @api.multi
-    def new_ticket(self):
-        self.ensure_one()
-        self.env['queue_management.ticket'].create({'service_id': self.id})
-
 
 class QueueManagementQueue(models.Model):
     _name = 'queue_management.queue'
@@ -45,6 +40,13 @@ class QueueManagementHead(models.Model):
             return super(QueueManagementHead, self)._generate_order_by(order_spec, query) + ", " + my_order
         return " order by " + my_order
 
+    @api.model
+    def create(self, vals):
+        head_rec = super(QueueManagementHead, self).create(vals)
+        (channel, message) = ((self._cr.dbname, 'queue_management.head'), ('invited', head_rec.id))
+        self.env['bus.bus'].sendone(channel, message)
+        return head_rec
+
 
 class QueueManagementTicket(models.Model):
     _name = 'queue_management.ticket'
@@ -64,18 +66,6 @@ class QueueManagementTicket(models.Model):
         if order_spec:
             return super(QueueManagementTicket, self)._generate_order_by(order_spec, query) + ", " + my_order
         return " order by " + my_order
-
-    @api.multi
-    def write(self, vals):
-        result = super().write(vals)
-        ticket_state = vals.get('ticket_state')
-        if ticket_state and (ticket_state == 'invited' or ticket_state == 'in_progress'):
-            (channel, message) = ((self._cr.dbname, 'screen.ticket'), ('current_ticket', self.ids))
-            self.env['bus.bus'].sendone(channel, message)
-        elif ticket_state:
-            (channel, message) = ((self._cr.dbname, 'screen.ticket'), ('done_ticket', self.ids))
-            self.env['bus.bus'].sendone(channel, message)
-        return result
 
     @api.model
     def is_next_exists(self, service_id):

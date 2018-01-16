@@ -37,13 +37,15 @@ var ScreenApp = Widget.extend({
         var self = this;
         for (var notif of notifications) {
             var channel = notif[0], message = notif[1];
-            if (channel[1] !== 'screen.ticket') {
+            if (channel[1] !== 'queue_management.head') {
                 return;
             }
-            if (message[0] === 'current_ticket') {
-                var ticket_ids = message[1];
-                alert(ticket_ids);
+            if (message[0] === 'invited') {
+                var line_id = message[1];
+                if (!this.screen.lines.find(l => l.id === line_id)) {
+                    this.screen.fetchLine(line_id);
                 }
+            }
         }
     },
 });
